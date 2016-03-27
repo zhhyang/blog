@@ -2,7 +2,7 @@ module.exports = function (app) {
     app.get('/', function (req, res) {
         res.render('index', {title: '主页'});
     });
-    app.get('reg',function (req,res) {
+    app.get('/reg',function (req,res) {
         res.render('reg',{title: '注册'});
     });
     app.post('/reg', function (req, res) {
@@ -12,6 +12,7 @@ module.exports = function (app) {
         res.render('login', { title: '登录' });
     });
     app.post('/login', function (req, res) {
+        
     });
     app.get('/post', function (req, res) {
         res.render('post', { title: '发表' });
