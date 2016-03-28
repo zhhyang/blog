@@ -1,0 +1,29 @@
+
+<%- include header %>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <form action="/post" method="post" role="form" class="form-horizontal">
+                <legend>文章发布</legend>
+
+                <div class="form-group">
+                    <label for="">标题</label>
+                    <input type="text" class="form-control" name="title" id="" placeholder="标题...">
+                </div>
+
+                <div class="form-group">
+                    <label for="">正文：</label>
+                    <textarea class="form-control" name="post" id="" cols="30" rows="10" placeholder="正文..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">发布</button>
+                <% if (error) { %>
+                <div><%= error %> </div>
+                <% } %>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<%- include footer %>

@@ -18,9 +18,38 @@
             <li class="active"><a title="主页" href="/">home</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
+            <% if (user) { %>
+            <li><a title="发表" href="/post">post</a></li>
+            <li role="presentation" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                    <%= user.name %> <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a title="登出" href="/logout">logout</a></li>
+                </ul>
+            <% } else { %>
             <li><a title="登录" href="/login">login</a></li>
             <li><a title="注册" href="/reg">register</a></li>
+            <% } %>
         </ul>
     </div><!-- /.navbar-collapse -->
 </nav>
+<% if (success) { %>
+<div><%= success %></div>
+<% } %>
+<% if (error) { %>
+<div><%= error %> </div>
+<% } %>
+
+<div class="container">
+    <% posts.forEach(function (post, index) { %>
+    <p><h2><a href="#"><%= post.title %></a></h2></p>
+    <p class="info">
+        作者：<a href="#"><%= post.name %></a> |
+        日期：<%= post.time.minute %>
+    </p>
+    <p><%- post.post %></p>
+    <% }) %>
+</div>
+
 <%- include footer %>
