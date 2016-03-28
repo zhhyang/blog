@@ -15,8 +15,8 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse navbar-ex1-collapse">
         <ul class="nav navbar-nav">
-            <li class="active"><a title="主页" href="/">home</a></li>
-            <li><a title="上传" href="/upload">上传</a></li>
+            <li><a title="主页" href="/">home</a></li>
+            <li class="active"><a title="上传" href="/upload">上传</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <% if (user) { %>
@@ -43,14 +43,22 @@
 <% } %>
 
 <div class="container">
-    <% posts.forEach(function (post, index) { %>
-    <p><h2><a href="#"><%= post.title %></a></h2></p>
-    <p class="info">
-        作者：<a href="#"><%= post.name %></a> |
-        日期：<%= post.time.minute %>
-    </p>
-    <p><%- post.post %></p>
-    <% }) %>
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <form action="/upload" method="post" role="form" class="form-horizontal" enctype="multipart/form-data">
+                <legend>文件上传</legend>
+
+                <div class="form-group">
+                    <input type="file" class="form-control" name="file" id="" >
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">上传</button>
+                <% if (error) { %>
+                <div><%= error %> </div>
+                <% } %>
+            </form>
+        </div>
+    </div>
 </div>
 
 <%- include footer %>
