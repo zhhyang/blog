@@ -56,7 +56,7 @@ Post.prototype.save = function (callback) {
     });
 };
 
-Post.get = function (name,callback) {
+Post.getAll = function (name,callback) {
   mongodb.open(function (err,db) {
       if (err) {
           return callback(err);//错误，返回 err 信息
@@ -86,3 +86,32 @@ Post.get = function (name,callback) {
       
   });
 };
+
+Post.getOne = function (name,day,title,callback) {
+    
+    mongodb.open(function (err,db) {
+        if (err){
+            return callback(err);
+        }
+        db.collection('posts',function (err,collection) {
+            if (err) {
+                mongodb.close();
+                return callback(err);//错误，返回 err 信息
+            }
+            collection.findOne({
+                "name": name,
+                "time.day": day,
+                "title": title
+            },function (err,doc) {
+                mongodb.close();
+                if (err) {
+                    return callback(err);
+                }
+                doc.post = markdown.toHTML(doc.post);
+                callback(null,doc);
+            });
+        })
+        
+    })
+    
+}
