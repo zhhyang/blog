@@ -238,7 +238,19 @@ module.exports = function (app) {
             res.redirect(url);//成功！返回文章页
         })
     });
-
+    /**
+     *删除动作
+     * */
+    app.get('/remove/:name/:day/:title',function (req,res) {
+        Post.remove(req.params.name,req.params.day,req.params.title,function (err) {
+            if (err){
+                req.flash('error', err);
+                return res.redirect('back');
+            }
+            req.flash('success', '删除成功!');
+            res.redirect('/');//删除成功!
+        })
+    });
 
     app.use(function (req, res) {
         res.render("404");
