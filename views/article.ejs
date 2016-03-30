@@ -42,8 +42,8 @@
 <div><%= error %> </div>
 <% } %>
 
-<div class="container">
-    <div class="row">
+<div class="container"><div class="row">
+
         <% if(user && (user.name == post.name)){%>
         <p>
             <a class="btn btn-primary" href="/edit/<%= post.name %>/<%= post.time.day %>/<%= post.title %>">编辑</a>

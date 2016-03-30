@@ -1,0 +1,11 @@
+<div class="row">
+    <ul class="pagination">
+        <% if (!isFirstPage) { %>
+        <li><a title="上一页"  href="?p=<%= page-1 %>">&laquo;</a></li>
+        <% } %>
+
+        <% if (!isLastPage) { %>
+        <li><a title="下一页" href="?p=<%= page+1 %>">&raquo;</a></li>
+        <% } %>
+    </ul>
+</div>

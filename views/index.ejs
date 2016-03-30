@@ -43,6 +43,7 @@
 <% } %>
 
 <div class="container">
+    <div class="row">
     <% posts.forEach(function (post, index) { %>
     <p><h2><a href="/u/<%- post.name %>/<%- post.time.day%>/<%- post.title %>"><%= post.title %></a></h2></p>
     <p class="info">
@@ -51,6 +52,8 @@
     </p>
     <p><%- post.post %></p>
     <% }) %>
+    </div>
+    <%- include page %>
 </div>
 
 <%- include footer %>
