@@ -202,6 +202,43 @@ module.exports = function (app) {
             })
         })
     });
+    /**
+     * 跳转到修改页面
+     * */
+    app.get('/edit/:name/:day/:title',function (req,res) {
+        Post.edit(req.params.name,req.params.day,req.params.title,function (err,post) {
+            if (!post){
+                req.flash('error', err);
+                return res.redirect('/');//用户不存在则跳转到主页
+            }
+            res.render('edit',{
+                title: '编辑',
+                post: post,
+                user : req.session.user,
+                success : req.flash('success').toString(),
+                error : req.flash('error').toString()
+            })
+        })
+    });
+    /**
+     * 执行修改动作
+     * */
+    app.post('/edit/:name/:day/:title',function (req,res) {
+        console.log(req.params.name);
+        console.log(req.params.day);
+        console.log(req.params.title);
+        console.log(req.body.post);
+        Post.update(req.params.name,req.params.day,req.params.title,req.body.post,function (err) {
+            var url = encodeURI('/u/' + req.params.name + '/' + req.params.day + '/' + req.params.title);
+            if (err) {
+                req.flash('error', err);
+                return res.redirect(url);//出错！返回文章页
+            }
+            req.flash('success', '修改成功!');
+            res.redirect(url);//成功！返回文章页
+        })
+    });
+
 
     app.use(function (req, res) {
         res.render("404");
