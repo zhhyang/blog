@@ -4,7 +4,8 @@
 
 
 var mongodb = require('./db'),
-    crypto = require('crypto');
+    crypto = require('crypto'),
+    async = require('async');
 
 function User(user) {
     this.name = user.name;
@@ -25,47 +26,48 @@ User.prototype.save = function (callback) {
         head:head
     };
 
-    mongodb.open(function (err,db) {
-        if (err) {
-            return callback(err);//错误，返回 err 信息
-        };
-        db.collection('users',function (err, collection) {
-            if (err) {
-                mongodb.close();
-                return callback(err);//错误，返回 err 信息
-            }
-            collection.insert(user,{safe:true},function (err,user) {
-                mongodb.close();
-                if (err) {
-                    return callback(err);//错误，返回 err 信息
-                }
-                callback(null,user[0]);//成功！err 为 null，并返回存储后的用户文档
+    async.waterfall([
+        function (cb) {
+            mongodb.open(function (err,db) {
+                cb(err,db);
             });
-
-        });
-
+        },
+        function (db,cb) {
+            db.collection('users',function (err,collection) {
+                cb(err,collection);
+            });
+        },
+        function (collection,cb) {
+            collection.insert(user,{safe:true},function (err,user) {
+                cb(err,user);
+            });
+        }
+    ],function (err,user) {
+        mongodb.close();
+        callback(null,user[0]);//成功！err 为 null，并返回存储后的用户文档
     });
 };
 
 User.get = function (name,callback) {
-  mongodb.open(function (err,db) {
-      if (err) {
-          return callback(err);//错误，返回 err 信息
-      };
-      db.collection('users',function (err, collection) {
-          if (err) {
-              mongodb.close();
-              return callback(err);//错误，返回 err 信息
-          }
-          collection.findOne({name:name},function (err,user) {
-              mongodb.close();
-              if (err) {
-                  return callback(err);//错误，返回 err 信息
-              }
-              callback(null,user);//成功！err 为 null，并返回存储后的用户文档
-          });
+    async.waterfall([
+        function (cb) {
+            mongodb.open(function (err,db) {
+                cb(err,db);
 
-      });
-      
-  });
+            });
+        },
+        function (db,cb) {
+            db.collection('users',function (err,collection) {
+                cb(err,collection);
+            });
+        },
+        function (collection,cb) {
+            collection.findOne({name:name},function (err,user) {
+                cb(err,user);
+            })
+        }
+    ],function (err,user) {
+        mongodb.close();
+        callback(err,user);
+    });
 };

@@ -201,7 +201,10 @@ module.exports = function (app) {
             })
         })
     });
-
+    /**
+     * 打开一篇文章
+     * @bug
+     * */
     app.get('/u/:name/:day/:title',function (req,res) {
         Post.getOne(req.params.name,req.params.day,req.params.title,function (err,post) {
             if (!post){
@@ -217,7 +220,29 @@ module.exports = function (app) {
             })
         })
     });
+    /**
+     * 按id查询
+     * */
+    app.get('/p/:_id',function (req,res) {
+        Post.getOneById(req.params._id,function (err,post) {
+            if (!post){
+                req.flash('error', err);
+                return res.redirect('/');//用户不存在则跳转到主页
+            }
+            res.render('article',{
+                title: req.params.title,
+                post: post,
+                user : req.session.user,
+                success : req.flash('success').toString(),
+                error : req.flash('error').toString()
+            })
+        })
+    });
 
+
+    /**
+     * 提交留言
+     * */
     app.post('/u/:name/:day/:title',function (req,res) {
         var date = new Date(),
             time = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " +

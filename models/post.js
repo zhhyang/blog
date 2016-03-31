@@ -4,7 +4,8 @@
 
 
 var mongodb = require('./db'),
-    markdown = require('markdown').markdown;
+    markdown = require('markdown').markdown,
+    ObjectID = require('mongodb').ObjectID;
 
 function Post(name, head,title, tags ,post) {
     this.name = name;
@@ -98,6 +99,46 @@ Post.getAllByPage = function (name,page,size, callback) {
         });
 
     });
+};
+
+Post.getOneById = function (_id, callback) {
+
+    mongodb.open(function (err, db) {
+        if (err) {
+            return callback(err);
+        }
+        db.collection('posts', function (err, collection) {
+            if (err) {
+                mongodb.close();
+                return callback(err);//错误，返回 err 信息
+            }
+            collection.findOne({
+                "_id" : ObjectID(_id)
+            }, function (err, doc) {
+                if (err) {
+                    return callback(err);
+                }
+                if(doc){
+                    collection.update({
+                        "_id" : ObjectID(_id)
+                    },{$inc:{"pv":1}},function (err) {
+                        mongodb.close();
+                        if (err) {
+                            return callback(err);
+                        }
+                    });
+                    doc.post = markdown.toHTML(doc.post);
+                    doc.comments.forEach(function (comment) {
+                        comment.content = markdown.toHTML(comment.content);
+                    });
+                    callback(null, doc);
+                }
+
+            });
+        })
+
+    })
+
 };
 
 Post.getOne = function (name, day, title, callback) {
