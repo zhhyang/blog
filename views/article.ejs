@@ -61,6 +61,7 @@
             <% }) %>
         </p>
         <pre><%- post.post %></pre>
+        <p class="info">阅读：<%= post.pv %> | 评论：<%= post.comments.length %></p>
     </div>
     <div class="row">
         <% post.comments.forEach(function (comment, index) { %>

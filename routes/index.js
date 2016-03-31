@@ -137,7 +137,7 @@ module.exports = function (app) {
     app.post('/post', function (req, res) {
         var currentUser = req.session.user,
             tags = [req.body.tag1, req.body.tag2, req.body.tag3],
-            post = new Post(currentUser.name,req.body.title,tags,req.body.post);
+            post = new Post(currentUser.name,currentUser.head,req.body.title,tags,req.body.post);
 
         post.save(function (err) {
             if (err) {
@@ -348,6 +348,34 @@ module.exports = function (app) {
             });
         })
     });
+
+    app.get('/search',function (req,res) {
+        var keyword = req.query.keyword;
+        Post.search(keyword,function (err,posts) {
+            if (err) {
+                req.flash('error', err);
+                return res.redirect('/');
+            }
+            res.render('search', {
+                title: "SEARCH:" + req.query.keyword,
+                posts: posts,
+                user: req.session.user,
+                success: req.flash('success').toString(),
+                error: req.flash('error').toString()
+            });
+        })
+    });
+
+    app.get('/links',function (req,res) {
+
+        res.render('links',{
+            title: '友情链接',
+            user: req.session.user,
+            success: req.flash('success').toString(),
+            error: req.flash('error').toString()
+        })
+    });
+
 
     app.use(function (req, res) {
         res.render("404");
