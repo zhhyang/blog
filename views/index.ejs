@@ -16,6 +16,8 @@
     <div class="collapse navbar-collapse navbar-ex1-collapse">
         <ul class="nav navbar-nav">
             <li class="active"><a title="主页" href="/">home</a></li>
+            <li><a title="archive" href="/archive">archive</a></li>
+            <li><a title="tags" href="/tags">tags</a></li>
             <li><a title="上传" href="/upload">上传</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
@@ -49,6 +51,12 @@
     <p class="info">
         作者：<a href="/u/<%- post.name%>"><%= post.name %></a> |
         日期：<%= post.time.minute %>
+        标签：
+        <% post.tags.forEach(function (tag, index) { %>
+        <% if (tag) { %>
+        <a class="tag" href="/tags/<%= tag %>"><%= tag %></a>
+        <% } %>
+        <% }) %>
     </p>
     <p><%- post.post %></p>
     <% }) %>
