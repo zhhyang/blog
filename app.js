@@ -14,11 +14,20 @@ var MongoStore = require('connect-mongo')(session);
 
 var multer = require('multer');
 
+var exphbs  = require('express-handlebars');
+
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
+
+app.engine('hbs', exphbs({
+  layoutsDir: 'views',
+  partialsDir: 'views',
+  defaultLayout: 'layout',
+  extname: '.hbs'
+}));
+app.set('view engine', 'hbs');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -55,7 +64,8 @@ if (app.get('env') === 'development') {
     res.status(err.status || 500);
     res.render('error', {
       message: err.message,
-      error: err
+      error: err,
+        layout: false
     });
   });
 }
@@ -66,6 +76,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error', {
     message: err.message,
+      layout: false,
     error: {}
   });
 });

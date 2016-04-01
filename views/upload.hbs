@@ -1,0 +1,18 @@
+
+<div class="row">
+    <div class="col-md-8 col-md-offset-2">
+        <form action="/upload" method="post" role="form" class="form-horizontal" enctype="multipart/form-data">
+            <legend>文件上传</legend>
+
+            <div style="position: relative;padding: 6px 12px; color: #fff;background-color: #73a6b7;border-color: #2e6da4; width: 200px">
+                <input type="file" style="position: absolute; opacity: 0" name="file">
+                <span><i class="glyphicon glyphicon-folder-open"></i> Browse …</span>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">上传</button>
+            {{#if error}}
+            <div>{{error}}</div>
+            {{/if}}
+        </form>
+    </div>
+</div>

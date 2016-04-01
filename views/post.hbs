@@ -1,0 +1,28 @@
+<div class="row">
+    <div class="col-md-8 col-md-offset-2">
+        <form action="/post" method="post" role="form" class="form-horizontal">
+            <legend>文章发布</legend>
+
+            <div class="form-group">
+                <label for="">标题</label>
+                <input type="text" class="form-control" name="title" id="" placeholder="标题...">
+            </div>
+            <div class="form-group">
+                <label for="">标签：</label>
+                <input type="text" class="form-control" id="tag1" name="tag1" placeholder="标签一">
+                <input type="text" class="form-control" id="tag2" name="tag2" placeholder="标签二">
+                <input type="text" class="form-control" id="tag3" name="tag3" placeholder="标签三">
+            </div>
+
+            <div class="form-group">
+                <label for="">正文：</label>
+                <textarea class="form-control" name="post" id="" cols="30" rows="10" placeholder="正文..."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">发布</button>
+            {{#if error}}
+            <div>{{error}}</div>
+            {{/if}}
+        </form>
+    </div>
+</div>

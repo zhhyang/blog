@@ -1,0 +1,30 @@
+
+<div class="row">
+
+        {{#self user post}}
+            {{#if this}}
+            <p>
+                <a class="btn btn-primary" href="/edit/{{_id}}">编辑</a>
+                <a class="btn btn-danger" href="/remove/{{_id}}">删除</a>
+            </p>
+            {{/if}}
+        {{/self}}
+        <p class="info">
+            作者：<a href="/u/{{post.name}}">{{post.name}}</a> |
+            日期：{{post.time.minute}}
+            标签：
+            {{#each tags}}
+            <a class="tag" href="/tags/{{this}}">{{this}}</a>
+            {{/each}}
+        </p>
+        <pre>{{post.post}}</pre>
+        <p class="info">阅读：{{post.pv}} | 评论：{{post.comments.length}}</p>
+</div>
+<div class="row">
+    {{#each post.comments}}
+    <p><a href="<%= comment.website %>">{{name}}</a>
+        <span class="info"> 回复于 {{time}}</span></p>
+    <p>{{content}}</p>
+    {{/each}}
+</div>
+    {{> comment}}

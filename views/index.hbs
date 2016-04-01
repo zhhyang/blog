@@ -1,0 +1,18 @@
+{{#each posts}}
+<div class="row">
+
+    <p><h2><a href="/p/{{_id}}">{{title}}</a></h2></p>
+    <p class="info">
+        作者：<a href="/u/{{name}}"><img src="{{head}}" class="r_head" />{{name}}</a> |
+        日期：{{time.minute}}
+        标签：
+        {{#each tags}}
+        <a class="tag" href="/tags/{{this}}">{{this}}</a>
+        {{/each}}
+    </p>
+    <p>{{post}}</p>
+    <p class="info">阅读：{{pv}} | 评论：{{comments.length}}</p>
+</div>
+{{/each}}
+
+{{> page}}
