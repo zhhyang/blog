@@ -3,9 +3,20 @@
  */
 
 
-var mongodb = require('./db'),
-    crypto = require('crypto'),
-    async = require('async');
+var mongoosedb = require('./mongoosedb'),
+    crypto = require('crypto');
+
+var Schema = mongoosedb.mongoose.Schema;
+
+var userSchema = new Schema({
+    name: String,
+    password: String,
+    email: String,
+    head: String
+},{
+    collection: 'users'
+});
+var userModel = mongoosedb.mongoose.model('User',userSchema);
 
 function User(user) {
     this.name = user.name;
@@ -13,7 +24,6 @@ function User(user) {
     this.email = user.email;
 }
 
-module.exports = User;
 
 User.prototype.save = function (callback) {
     var md5 = crypto.createHash('md5'),
@@ -26,48 +36,24 @@ User.prototype.save = function (callback) {
         head:head
     };
 
-    async.waterfall([
-        function (cb) {
-            mongodb.open(function (err,db) {
-                cb(err,db);
-            });
-        },
-        function (db,cb) {
-            db.collection('users',function (err,collection) {
-                cb(err,collection);
-            });
-        },
-        function (collection,cb) {
-            collection.insert(user,{safe:true},function (err,user) {
-                cb(err,user);
-            });
+    var newUser = new userModel(user);
+
+    newUser.save(function (err,user) {
+        if(err){
+            return callback(err);
         }
-    ],function (err,user) {
-        mongodb.close();
-        callback(null,user[0]);//成功！err 为 null，并返回存储后的用户文档
-    });
+        callback(null,user);
+    })
 };
 
 User.get = function (name,callback) {
-    async.waterfall([
-        function (cb) {
-            mongodb.open(function (err,db) {
-                cb(err,db);
-
-            });
-        },
-        function (db,cb) {
-            db.collection('users',function (err,collection) {
-                cb(err,collection);
-            });
-        },
-        function (collection,cb) {
-            collection.findOne({name:name},function (err,user) {
-                cb(err,user);
-            })
+    userModel.findOne({name:name},function (err,user) {
+        if (err) {
+            return callback(err);
         }
-    ],function (err,user) {
-        mongodb.close();
-        callback(err,user);
-    });
+        callback(null, user);
+    })
 };
+
+
+module.exports = User;
