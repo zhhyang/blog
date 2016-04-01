@@ -1,6 +1,6 @@
 
 <div class="row">
-
+        {{!-- 自己实现的helper --}}
         {{#self user post}}
             {{#if this}}
             <p>
@@ -17,14 +17,15 @@
             <a class="tag" href="/tags/{{this}}">{{this}}</a>
             {{/each}}
         </p>
-        <pre>{{post.post}}</pre>
+        {{post.post}}
         <p class="info">阅读：{{post.pv}} | 评论：{{post.comments.length}}</p>
 </div>
 <div class="row">
     {{#each post.comments}}
-    <p><a href="<%= comment.website %>">{{name}}</a>
+    <p><a href="{{website}}">{{name}}</a>
         <span class="info"> 回复于 {{time}}</span></p>
     <p>{{content}}</p>
     {{/each}}
 </div>
+
     {{> comment}}
