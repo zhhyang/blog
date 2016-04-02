@@ -1,7 +1,10 @@
 {{#each posts}}
-<div class="row">
-    <li><h3>{{time.year}}</h3></li>
-    <li><time>{{time.day}}</time></li>
-    <li><a href="/u/{{_id}}">{{title}}</a></li>
-</div>
+    <div class="row">
+        {{#showYear @index}}
+            <div><h3>{{this.time.year}}</h3></div>
+        {{/showYear}}
+        <ul class="archive">
+            <li><time>{{time.day}}</time><a href="/p/{{_id}}">{{title}}</a></li>
+        </ul>
+    </div>
 {{/each}}

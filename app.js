@@ -16,6 +16,9 @@ var multer = require('multer');
 
 var exphbs  = require('express-handlebars');
 
+var passport = require('passport');
+var GithubStrategy = require('passport-github').Strategy;
+
 var app = express();
 
 // view engine setup
@@ -54,8 +57,19 @@ app.use(multer({
     return filename;
   }
 }));
+
+app.use(passport.initialize());//初始化 Passport
+
 routes(app);
 // error handlers
+
+passport.use(new GithubStrategy({
+    clientID: "ff75066b71b712f03740",
+    clientSecret: "f0efe7f850a936c8d52198bb78c6cddf16ba81ac",
+    callbackURL: "http://localhost:3000/login/github/callback"
+}, function(accessToken, refreshToken, profile, done) {
+    done(null, profile);
+}));
 
 // development error handler
 // will print stacktrace

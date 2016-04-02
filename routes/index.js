@@ -1,7 +1,8 @@
 var crypto = require('crypto'),
     User = require('../models/user'),
     Post = require('../models/post'),
-    Comment = require('../models/comment');
+    Comment = require('../models/comment'),
+    passport = require('passport');
 
 
 module.exports = function (app) {
@@ -94,6 +95,17 @@ module.exports = function (app) {
             error: req.flash('error').toString()
         });
     });
+
+    app.get("/login/github", passport.authenticate("github", {session: false}));
+    app.get("/login/github/callback", passport.authenticate("github", {
+        session: false,
+        failureRedirect: '/login',
+        successFlash: '登陆成功！'
+    }), function (req, res) {
+        req.session.user = {name: req.user.username, head: "https://gravatar.com/avatar/" + req.user._json.gravatar_id + "?s=48"};
+        res.redirect('/');
+    });
+
     /**
      * 登录
      *
@@ -386,7 +398,14 @@ module.exports = function (app) {
                 posts: posts,
                 user: req.session.user,
                 success: req.flash('success').toString(),
-                error: req.flash('error').toString()
+                error: req.flash('error').toString(),
+                helpers: {
+                    showYear: function(index,options) {
+                        if ((index == 0) || (posts[index].time.year != posts[index - 1].time.year)) {
+                            return options.fn(this);
+                        }
+                    }
+                }
             });
         })
     });
