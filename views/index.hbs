@@ -1,18 +1,62 @@
-{{#each posts}}
 <div class="row">
-
-    <p><h2><a href="/p/{{_id}}">{{title}}</a></h2></p>
-    <p class="info">
-        作者：<a href="/u/{{name}}"><img src="{{head}}" class="r_head" />{{name}}</a> |
-        日期：{{time.minute}}
-        标签：
-        {{#each tags}}
-        <a class="tag" href="/tags/{{this}}">{{this}}</a>
+    <div class="col-md-8">
+        {{#each posts}}
+            <div class="row">
+                <p><h3><a href="/p/{{_id}}">{{title}}</a></h3></p>
+                <p class="info">
+                    作者：<a href="/u/{{name}}"><img src="{{head}}" class="r_head" />{{name}}</a> |
+                    日期：{{time.minute}}
+                    标签：
+                    {{#each tags}}
+                        <a class="tag" href="/tags/{{this}}">{{this}}</a>
+                    {{/each}}
+                    阅读：{{pv}} | 评论：{{comments.length}}
+                </p>
+            </div>
         {{/each}}
-    </p>
-    <p>{{post}}</p>
-    <p class="info">阅读：{{pv}} | 评论：{{comments.length}}</p>
-</div>
-{{/each}}
 
-{{> page}}
+        {{> page}}
+    </div>
+    <div class="col-md-4">
+        {{#if user}}
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">个人信息</h3>
+                </div>
+                <div class="panel-body">
+                    <img src="{{user.head}}" /><span>{{user.name}}</span>
+                </div>
+            </div>
+        {{else}}
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">N-Blog：Node.js博客</h3>
+                </div>
+                <div class="panel-body">
+                    您可以<a href="/login">登录</a>或<a href="/reg">注册</a>,
+                    也可以<a class="btn btn-success" href="/login/github">
+                    使用 GitHub 登录
+                </a>
+                </div>
+            </div>
+        {{/if}}
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">友情社区</h3>
+                </div>
+                <div class="panel-body">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <a href="https://www.baidu.com" target="_blank">百度</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="http://weixin.com/" target="_blank">微信</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

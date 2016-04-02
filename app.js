@@ -10,8 +10,10 @@ var routes = require('./routes/index');
 var settings = require('./settings');
 var flash = require('connect-flash');
 var session = require('express-session');
+//
 var MongoStore = require('connect-mongo')(session);
-
+//用redis来存储session
+var RedisStore = require('connect-redis')(session);
 var multer = require('multer');
 
 var exphbs  = require('express-handlebars');
@@ -40,7 +42,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(session({
+/*app.use(session({
   secret: settings.cookieSecret,
   key: settings.db,//cookie name
   cookie: {maxAge: 1000 * 60 * 60 * 24 * 30},//30 days
@@ -49,7 +51,18 @@ app.use(session({
     host: settings.host,
     port: settings.port
   })
+}));*/
+
+app.use(session({
+    secret: settings.cookieSecret,
+    store: new RedisStore({
+        host: settings.redis_host,
+        port: settings.redis_port
+    }),
+    resave: true,
+    saveUninitialized: true
 }));
+
 app.use(flash());
 app.use(multer({
   dest:'./public/images',
