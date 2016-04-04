@@ -5,7 +5,7 @@ var crypto = require('crypto'),
     passport = require('passport');
 
 
-module.exports = function (app) {
+module.exports = function (app,upload) {
     /**
      * 首页跳转
      *
@@ -177,7 +177,7 @@ module.exports = function (app) {
         });
     });
 
-    app.post('/upload', function (req, res) {
+    app.post('/upload', upload.single('file') ,function (req, res) {
         req.flash('success', '文件上传成功!');
         res.redirect('/upload');
     });

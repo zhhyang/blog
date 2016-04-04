@@ -64,16 +64,21 @@ app.use(session({
 }));
 
 app.use(flash());
-app.use(multer({
-  dest:'./public/images',
-  rename:function (fieldname, filename) {
-    return filename;
-  }
-}));
+
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './public/images/')
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now()+'.jpg')
+    }
+});
+
+var upload = multer({ storage: storage });
 
 app.use(passport.initialize());//初始化 Passport
 
-routes(app);
+routes(app,upload);
 // error handlers
 
 passport.use(new GithubStrategy({

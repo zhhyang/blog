@@ -6,21 +6,22 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
-    "body-parser": "~1.13.2",
-    "cookie-parser": "~1.3.5",
-    "debug": "~2.2.0",
-    "express-handlebars": "*",
-    "express": "~4.13.1",
-    "morgan": "~1.6.1",
-    "serve-favicon": "~2.3.0",
-    "mongoose":"4.4.10",
-    "express-session": "1.9.1",
-    "connect-mongo": "0.8.2",
+    "body-parser": "^1.15.0",
     "connect-flash": "0.1.1",
+    "connect-mongo": "^1.1.0",
+    "connect-redis": "*",
+    "cookie-parser": "^1.4.1",
+    "debug": "~2.2.0",
+    "express": "~4.13.1",
+    "mongodb":"*",
+    "express-handlebars": "*",
+    "express-session": "^1.13.0",
     "markdown": "0.5.0",
-    "multer": "0.1.6",
+    "mongoose": "^4.4.11",
+    "morgan": "^1.7.0",
+    "multer": "^1.1.0",
     "passport": "*",
     "passport-github": "*",
-    "connect-redis":"*"
+    "serve-favicon": "~2.3.0"
   }
 }
