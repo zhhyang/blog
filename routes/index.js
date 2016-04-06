@@ -1,7 +1,6 @@
 var crypto = require('crypto'),
     User = require('../models/user'),
     Post = require('../models/post'),
-    Comment = require('../models/comment'),
     passport = require('passport');
 
 
@@ -230,7 +229,11 @@ module.exports = function (app,upload) {
                 error : req.flash('error').toString(),
                 helpers: {
                     self: function(user,doc,options) {
-                        return options.fn(user && user.name == doc.name);
+                        if(user && user.name == doc.name){
+                            return options.fn(this);
+                        }else {
+                            return options.inverse(this);
+                        }
                     }
                 }
             })
@@ -241,7 +244,7 @@ module.exports = function (app,upload) {
     /**
      * 提交留言
      * */
-    app.post('/u/:name/:day/:title',function (req,res) {
+    app.post('/p/:_id/comment',function (req,res) {
         var date = new Date(),
             time = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " +
                 date.getHours() + ":" + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes());
@@ -252,8 +255,7 @@ module.exports = function (app,upload) {
             time: time,
             content: req.body.content
         };
-        var newComment = new Comment(req.params.name, req.params.day, req.params.title, comment);
-        newComment.save(function (err) {
+        Post.addComment(req.params._id, comment,function (err) {
             if (err) {
                 req.flash('error', err);
                 return res.redirect('back');
@@ -266,8 +268,8 @@ module.exports = function (app,upload) {
     /**
      * 跳转到修改页面
      * */
-    app.get('/edit/:name/:day/:title',function (req,res) {
-        Post.edit(req.params.name,req.params.day,req.params.title,function (err,post) {
+    app.get('/edit/:_id',function (req,res) {
+        Post.edit(req.params._id,function (err,post) {
             if (!post){
                 req.flash('error', err);
                 return res.redirect('/');//用户不存在则跳转到主页
@@ -284,13 +286,10 @@ module.exports = function (app,upload) {
     /**
      * 执行修改动作
      * */
-    app.post('/edit/:name/:day/:title',function (req,res) {
-        console.log(req.params.name);
-        console.log(req.params.day);
-        console.log(req.params.title);
+    app.post('/edit/:_id',function (req,res) {
         console.log(req.body.post);
-        Post.update(req.params.name,req.params.day,req.params.title,req.body.post,function (err) {
-            var url = encodeURI('/u/' + req.params.name + '/' + req.params.day + '/' + req.params.title);
+        Post.update(req.params._id,req.body.post,function (err) {
+            var url = encodeURI('/p/' + req.params._id );
             if (err) {
                 req.flash('error', err);
                 return res.redirect(url);//出错！返回文章页
@@ -302,8 +301,8 @@ module.exports = function (app,upload) {
     /**
      *删除动作
      * */
-    app.get('/remove/:name/:day/:title',function (req,res) {
-        Post.remove(req.params.name,req.params.day,req.params.title,function (err) {
+    app.get('/remove/:_id',function (req,res) {
+        Post.remove(req.params._id,function (err) {
             if (err){
                 req.flash('error', err);
                 return res.redirect('back');
@@ -344,14 +343,15 @@ module.exports = function (app,upload) {
      * tags
      * */
     app.get('/tags',function (req,res) {
-        Post.getTags(function (err,posts) {
+        Post.getTags(function (err,tags) {
             if (err) {
                 req.flash('error', err);
                 return res.redirect('/');
             }
+            console.log(tags);
             res.render('tags', {
                 title: '标签',
-                posts: posts,
+                tags: tags,
                 user: req.session.user,
                 success: req.flash('success').toString(),
                 error: req.flash('error').toString()

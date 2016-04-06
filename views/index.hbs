@@ -1,17 +1,29 @@
 <div class="row">
     <div class="col-md-8">
         {{#each posts}}
-            <div class="row">
-                <p><h3><a href="/p/{{_id}}">{{title}}</a></h3></p>
-                <p class="info">
-                    作者：<a href="/u/{{name}}"><img src="{{head}}" class="r_head" />{{name}}</a> |
-                    日期：{{time.minute}}
-                    标签：
+            <div class="article">
+                <h3><a href="/p/{{_id}}" title="{{title}}">{{title}}</a></h3>
+                <span class="muted">{{time.minute}}</span>
+                {{#if name}}
+                    &nbsp; - &nbsp;
+                    <span>Author: </span>
+                    <a href="/u/{{name}}">
+                        {{name}}
+                    </a>
+                {{/if}}
+
+                {{#if tags }}
+                    &nbsp; - &nbsp;
+                    <span>Tags: </span>
                     {{#each tags}}
-                        <a class="tag" href="/tags/{{this}}">{{this}}</a>
+                        {{#if this}}
+                        <i class="muted fa fa-tag"></i>&nbsp;
+                        <a href="/tags/{{this}}" class="tag">{{this}}</a>
+                        &nbsp;&nbsp;
+                        {{/if}}
                     {{/each}}
-                    阅读：{{pv}} | 评论：{{comments.length}}
-                </p>
+                {{/if}}
+                阅读：{{pv}} | 评论：{{comments.length}}
             </div>
         {{/each}}
 

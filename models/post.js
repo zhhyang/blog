@@ -5,7 +5,38 @@
 
 var mongodb = require('./db'),
     markdown = require('markdown').markdown,
-    ObjectID = require('mongodb').ObjectID;
+    ObjectID = require('mongodb').ObjectID,
+    mongoosedb = require('./mongoosedb');
+
+var Schema = mongoosedb.mongoose.Schema;
+
+var postSchema = new Schema({
+    name: String,
+    head: String,
+    title: String,
+    tags: { type: []},
+    post: String,
+    time: {
+        date: Date,
+        year: Number,
+        month: String,
+        day: String,
+        minute: String
+    },
+    comments: [{
+        name: String,
+        email: String,
+        website: String,
+        time: String,
+        content: String
+    }],
+    pv: {type: Number, default: 0}
+},{
+    collection: 'posts'
+});
+
+var postModel = mongoosedb.mongoose.model('Post',postSchema);
+
 
 function Post(name, head,title, tags ,post) {
     this.name = name;
@@ -41,27 +72,57 @@ Post.prototype.save = function (callback) {
         pv: 0
     };
 
+
+    var newPost = new postModel(post);
+
+    newPost.save(function (err,post) {
+        if(err){
+            return callback(err);
+        }
+        callback(null,post);
+    });
+};
+
+
+/*postSchema.methods = {
+    addComment: function (id, comment, callback) {
+
+        this.comments.push(comment);
+        return this.save();
+    }
+};*/
+/**
+ * add comment
+ *
+ * */
+Post.addComment = function (id,comment,callback) {
+
     mongodb.open(function (err, db) {
         if (err) {
-            return callback(err);//错误，返回 err 信息
+            mongodb.close();
+            return callback(err);
         }
         db.collection('posts', function (err, collection) {
             if (err) {
                 mongodb.close();
-                return callback(err);//错误，返回 err 信息
+                return callback(err);
             }
-            collection.insert(post, {safe: true}, function (err, post) {
+            collection.update({
+                "_id": ObjectID(id),
+            }, {
+                $push: {"comments": comment}
+            }, function (err) {
                 mongodb.close();
                 if (err) {
-                    return callback(err);//错误，返回 err 信息
+                    return callback(err);
                 }
-                callback(null, post[0]);//成功！err 为 null，并返回存储后的用户文档
+                callback(null);
             });
-
-        });
-
-    });
+        })
+    })
 };
+
+
 
 Post.getAllByPage = function (name,page,size, callback) {
     mongodb.open(function (err, db) {
@@ -185,7 +246,7 @@ Post.getOne = function (name, day, title, callback) {
 
 };
 
-Post.edit = function (name, day, title, callback) {
+Post.edit = function (_id, callback) {
 
     mongodb.open(function (err, db) {
         if (err) {
@@ -197,9 +258,7 @@ Post.edit = function (name, day, title, callback) {
                 return callback(err);//错误，返回 err 信息
             }
             collection.findOne({
-                "name": name,
-                "time.day": day,
-                "title": title
+                "_id": ObjectID(_id)
             }, function (err, doc) {
                 mongodb.close();
                 if (err) {
@@ -213,7 +272,7 @@ Post.edit = function (name, day, title, callback) {
 
 };
 
-Post.update = function (name, day, title, post, callback) {
+Post.update = function (_id, post, callback) {
     mongodb.open(function (err, db) {
         if (err) {
             return callback(err);
@@ -224,9 +283,7 @@ Post.update = function (name, day, title, post, callback) {
                 return callback(err);
             }
             collection.update({
-                "name": name,
-                "time.day": day,
-                "title": title
+                "_id": ObjectID(_id)
             }, {
                 $set: {post: post}
             }, function (err) {
@@ -243,7 +300,7 @@ Post.update = function (name, day, title, post, callback) {
     })
 };
 
-Post.remove = function (name, day, title, callback) {
+Post.remove = function (_id, callback) {
     mongodb.open(function (err, db) {
         if (err) {
             return callback(err);
@@ -254,9 +311,7 @@ Post.remove = function (name, day, title, callback) {
                 return callback(err);
             }
             collection.remove({
-                "name": name,
-                "time.day": day,
-                "title": title
+                "_id": ObjectID(_id)
             }, {
                 w: 1
             }, function (err) {

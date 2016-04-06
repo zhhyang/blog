@@ -1,0 +1,20 @@
+<script src="/javascripts/notie.js"></script>
+<script>
+    var success = '{{success}}';
+    var warning = '{{warning}}';
+    var error = '{{error}}';
+    var info = '{{info}}';
+
+    if (success){
+        notie.alert(notie.type.SUCCESS,success,1.5);
+    }
+    if (warning){
+        notie.alert(notie.type.WARNING,warning,1.5);
+    }
+    if (error){
+        notie.alert(notie.type.ERROR,error,1.5);
+    }
+    if (info){
+        notie.alert(notie.type.INFO,info,1.5);
+    }
+</script>

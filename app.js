@@ -28,7 +28,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 app.engine('hbs', exphbs({
   layoutsDir: 'views',
-  partialsDir: 'views',
+  partialsDir: 'views/partials',
   defaultLayout: 'layout',
   extname: '.hbs'
 }));
@@ -52,13 +52,13 @@ app.use(express.static(path.join(__dirname, 'public')));
     port: settings.port
   })
 }));*/
-
+var store = new MongoStore({
+    url: 'mongodb://localhost:27017/blog',
+    collection: 'sessions'
+});
 app.use(session({
     secret: settings.cookieSecret,
-    store: new RedisStore({
-        host: settings.redis_host,
-        port: settings.redis_port
-    }),
+    store: store,
     resave: true,
     saveUninitialized: true
 }));
