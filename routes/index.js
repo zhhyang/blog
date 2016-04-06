@@ -1,7 +1,8 @@
 var crypto = require('crypto'),
     User = require('../models/user'),
     Post = require('../models/post'),
-    passport = require('passport');
+    passport = require('passport'),
+    elastic = require('../elasticsearch');
 
 
 module.exports = function (app,upload) {
@@ -150,11 +151,14 @@ module.exports = function (app,upload) {
             tags = [req.body.tag1, req.body.tag2, req.body.tag3],
             post = new Post(currentUser.name,currentUser.head,req.body.title,tags,req.body.post);
 
-        post.save(function (err) {
+        post.save(function (err,post) {
             if (err) {
                 req.flash('error', err);
                 return res.redirect('/');
             }
+            elastic.addDocument(post).then(function (result) {
+                console.log(result)
+            });
             req.flash('success', '发布成功!');
             res.redirect('/');//发表成功跳转到主页
         })
@@ -408,6 +412,19 @@ module.exports = function (app,upload) {
                 }
             });
         })
+    });
+
+
+    /* POST document to be indexed */
+    app.post('/', function (req, res, next) {
+        elastic.addDocument(req.body).then(function (result) { res.json(result) });
+    });
+
+    
+    app.get('/esearch/:input',function (req,res,next) {
+       elastic.search(req.params.input).then(function (result) {
+           res.json(result)
+       })
     });
 
     app.get('/links',function (req,res) {
