@@ -114,8 +114,7 @@ app.use(function(err, req, res, next) {
 });
 
 
-///
-
+///初始化elasticsearch索引，启动时执行
 var elastic = require('./elasticsearch');
 elastic.indexExists().then(function (exists) {
     if (exists) {
