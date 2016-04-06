@@ -419,11 +419,30 @@ module.exports = function (app,upload) {
     app.post('/', function (req, res, next) {
         elastic.addDocument(req.body).then(function (result) { res.json(result) });
     });
+    app.get('/esearch',function (req,res) {
+
+        res.render('esearch',{
+            title: '搜索中心',
+            user: req.session.user,
+            success: req.flash('success').toString(),
+            error: req.flash('error').toString(),
+            layout: false
+        })
+    });
 
     
-    app.get('/esearch/:input',function (req,res,next) {
-       elastic.search(req.params.input).then(function (result) {
-           res.json(result)
+    app.post('/esearch',function (req,res,next) {
+       elastic.search(req.body.q).then(function (result) {
+           //res.json(result)
+           console.log(result);
+           res.render('esearch',{
+               title: '搜索中心',
+               user: req.session.user,
+               hits:result.hits.hits,
+               success: req.flash('success').toString(),
+               error: req.flash('error').toString(),
+               layout: false
+           })
        })
     });
 

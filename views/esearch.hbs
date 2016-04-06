@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>{{title}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+</head>
+<body>
+{{> nav}}
+<div class="container">
+    <div class="row">
+        <div class="col-xs-8 col-xs-offset-2">
+            <form action="/esearch" method="post" role="form" id="search_form">
+                <div class="input-group">
+                    <input type="text" class="form-control input-lg" name="q" placeholder="Search for...">
+                <span class="input-group-btn">
+                    <button class="btn btn-default btn-lg" type="submit"><i class="fa fa-search"></i></button>
+                </span>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row" id="search_result">
+        {{#if hits}}
+            {{#each hits}}
+                <div class="article">
+                    <h3><a href="/p/{{_source.id}}" title="{{_source.title}}">{{_source.title}}</a></h3>
+                </div>
+            {{/each}}
+        {{/if}}
+    </div>
+</div>
+
+{{> notie}}
+<script src="//cdn.bootcss.com/jquery/1.12.1/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+</body>
+</html>
+
+
+
+

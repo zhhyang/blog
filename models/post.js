@@ -122,6 +122,35 @@ Post.addComment = function (id,comment,callback) {
     })
 };
 
+Post.getAll = function (callback) {
+    mongodb.open(function (err, db) {
+        if (err) {
+            return callback(err);//错误，返回 err 信息
+        }
+        db.collection('posts', function (err, collection) {
+            if (err) {
+                mongodb.close();
+                return callback(err);//错误，返回 err 信息
+            }
+            var query = {};
+
+            collection.count(query,function (err,total) {
+                collection.find(query).sort({time: -1}).toArray(function (err, docs) {
+                    mongodb.close();
+                    if (err) {
+                        return callback(err);//失败！返回 err
+                    }
+                    docs.forEach(function (doc) {
+                        doc.post = markdown.toHTML(doc.post);
+                    });
+                    callback(null, docs,total);
+                })
+            });
+        });
+
+    });
+
+};
 
 
 Post.getAllByPage = function (name,page,size, callback) {

@@ -115,31 +115,19 @@ app.use(function(err, req, res, next) {
 
 
 ///初始化elasticsearch索引，启动时执行
-var elastic = require('./elasticsearch');
+// every time to bootstrap the app, it will init the index and store the posts
+var elastic = require('./elasticsearch'),
+    Post = require('./models/post');
 elastic.indexExists().then(function (exists) {
     if (exists) {
         return elastic.deleteIndex();
     }
 }).then(function () {
     return elastic.initIndex().then(elastic.initMapping).then(function () {
-        //Add a few book titles for the autocomplete
-        //elasticsearch offers a bulk functionality as well, but this is for a different time
-        var promises = [
-            'Thing Explainer',
-            'The Internet Is a Playground',
-            'The Pragmatic Programmer',
-            'The Hitchhikers Guide to the Galaxy',
-            'Trial of the Clone',
-            'All Quiet on the Western Front',
-            'The Animal Farm',
-            'The Circle'
-        ].map(function (bookTitle) {
-            return elastic.addDocument({
-                title: bookTitle,
-                post: bookTitle + " content!",
-                metadata: {
-                    titleLength: bookTitle.length
-                }
+
+        Post.getAll(function (err,posts,total) {
+            posts.map(function (post) {
+                return elastic.addDocument(post);
             });
         });
         return Promise.all(promises);
