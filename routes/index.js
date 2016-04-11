@@ -13,7 +13,7 @@ module.exports = function (app,upload) {
     app.get('/', function (req, res) {
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1,
-            size =10;
+            size =5;
         Post.getAllByPage(null,page,size,function (err,posts,total) {
             if (err){
                 posts = [];
@@ -22,9 +22,10 @@ module.exports = function (app,upload) {
                 title: '主页',
                 user: req.session.user,
                 posts: posts,
-                page:page,
+                lastPage: page - 1,
+                nextPage: page + 1,
                 isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * 10 + posts.length) == total,
+                isLastPage: ((page - 1) * 5 + posts.length) == total,
                 success: req.flash('success').toString(),
                 error: req.flash('error').toString()
             });
@@ -226,7 +227,7 @@ module.exports = function (app,upload) {
                 return res.redirect('/');//用户不存在则跳转到主页
             }
             res.render('article',{
-                title: req.params.title,
+                title: post.title,
                 post: post,
                 user : req.session.user,
                 success : req.flash('success').toString(),
@@ -453,6 +454,15 @@ module.exports = function (app,upload) {
             user: req.session.user,
             success: req.flash('success').toString(),
             error: req.flash('error').toString()
+        })
+    });
+    /*
+    * rest api
+    * find all posts
+    * */
+    app.get('/posts',function (req,res) {
+        Post.getAll(function (err,posts) {
+            res.json(posts);
         })
     });
 

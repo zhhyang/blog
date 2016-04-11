@@ -3,12 +3,12 @@
         {{#if isFirstPage}}
 
         {{else}}
-        <li><a title="上一页"  href="?p=<%= page-1 %>">&laquo;</a></li>
+        <li><a title="上一页"  href="?p={{lastPage}}">&laquo;</a></li>
         {{/if}}
 
         {{#if isLastPage}}
         {{else}}
-        <li><a title="下一页" href="?p=<%= page+1 %>">&raquo;</a></li>
+        <li><a title="下一页" href="?p={{nextPage}}">&raquo;</a></li>
         {{/if}}
     </ul>
 </div>

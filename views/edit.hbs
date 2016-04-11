@@ -1,26 +1,51 @@
-<div class="container">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            <form action="/edit/{{post._id}}" method="post" role="form" class="form-horizontal">
-                <legend>文章编辑</legend>
+<div class="row">
+    <div class="col-md-12">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#tab-form" aria-controls="home" role="tab" data-toggle="tab">发布</a></li>
+            <li role="presentation"><a href="#tab-preview" aria-controls="profile" role="tab" data-toggle="tab">预览</a></li>
+        </ul>
 
-                <div class="form-group">
-                    <label for="">标题</label>
-                    <input type="text" class="form-control" name="title" id="" placeholder="标题..." value="{{post.title}}" disabled="disabled">
-                </div>
-                <div class="form-group">
-                    <label for="">标签：</label>
-                    <input type="text" class="form-control" id="tag1" name="tag1" placeholder="标签一">
-                    <input type="text" class="form-control" id="tag2" name="tag2" placeholder="标签二">
-                    <input type="text" class="form-control" id="tag3" name="tag3" placeholder="标签三">
-                </div>
-                <div class="form-group">
-                    <label for="">正文：</label>
-                    <textarea class="form-control" name="post" id="" cols="30" rows="10" placeholder="正文...">{{post.post}}</textarea>
-                </div>
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="tab-form">
+                <form action="/edit/{{post._id}}" method="post" role="form" class="form-horizontal">
+                    <legend>文章发布</legend>
 
-                <button type="submit" class="btn btn-primary btn-block">保存修改</button>
-            </form>
+                    <div class="form-group">
+                        <label for="">标题</label>
+                        <input type="text" class="form-control" name="title" id="" placeholder="标题..." value="{{post.title}}" disabled="disabled">
+                    </div>
+                    <div class="form-group">
+                        <label for="">标签：</label>
+                        <input type="text" class="form-control" id="tag1" name="tag1" placeholder="标签一">
+                        <input type="text" class="form-control" id="tag2" name="tag2" placeholder="标签二">
+                        <input type="text" class="form-control" id="tag3" name="tag3" placeholder="标签三">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="">正文：</label>
+                        <textarea class="form-control" name="post" id="markdown" cols="30" rows="10" placeholder="正文..." onblur="compile()" style="height: 400px;">{{post.post}}</textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">保存修改</button>
+                </form>
+
+            </div>
+            <div role="tabpanel" class="tab-pane" id="tab-preview">
+                暂无内容...
+            </div>
         </div>
     </div>
 </div>
+<script src="//cdn.bootcss.com/showdown/1.3.0/showdown.min.js"></script>
+<script>
+
+    function compile() {
+        var text = $("#markdown").val();
+        var converter = new showdown.Converter();
+        var html = converter.makeHtml(text);
+        html = html ? html : '暂无内容...';
+        $("#tab-preview").html(html);
+    }
+</script>

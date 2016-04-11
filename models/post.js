@@ -30,7 +30,8 @@ var postSchema = new Schema({
         time: String,
         content: String
     }],
-    pv: {type: Number, default: 0}
+    pv: {type: Number, default: 0},
+    createTime: Date
 },{
     collection: 'posts'
 });
@@ -69,7 +70,8 @@ Post.prototype.save = function (callback) {
         post: this.post,
         time: time,
         comments: [],
-        pv: 0
+        pv: 0,
+        createTime:date
     };
 
 
@@ -123,38 +125,28 @@ Post.addComment = function (id,comment,callback) {
 };
 
 Post.getAll = function (callback) {
-    mongodb.open(function (err, db) {
-        if (err) {
-            return callback(err);//错误，返回 err 信息
-        }
-        db.collection('posts', function (err, collection) {
-            if (err) {
-                mongodb.close();
-                return callback(err);//错误，返回 err 信息
-            }
-            var query = {};
-
-            collection.count(query,function (err,total) {
-                collection.find(query).sort({time: -1}).toArray(function (err, docs) {
-                    mongodb.close();
-                    if (err) {
-                        return callback(err);//失败！返回 err
-                    }
-                    docs.forEach(function (doc) {
-                        doc.post = markdown.toHTML(doc.post);
-                    });
-                    callback(null, docs,total);
-                })
-            });
-        });
-
+    var condition = {};
+    var query = postModel.find(condition).sort({createTime : -1});
+    var promise = query.exec();
+    promise.then(function (docs) {
+       callback(null,docs);
     });
-
 };
 
 
 Post.getAllByPage = function (name,page,size, callback) {
-    mongodb.open(function (err, db) {
+
+    var condition = {};
+    if (name) {
+        condition.name = name;
+    }
+    postModel.count(condition).exec().then(function (total) {
+        postModel.find(condition).sort({createTime : -1}).skip((page - 1)*size).limit(size).exec().then(function (docs) {
+            callback(null,docs,total);
+        })
+    });
+
+    /*mongodb.open(function (err, db) {
         if (err) {
             return callback(err);//错误，返回 err 信息
         }
@@ -188,7 +180,7 @@ Post.getAllByPage = function (name,page,size, callback) {
 
         });
 
-    });
+    });*/
 };
 
 Post.getOneById = function (_id, callback) {
